@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vocabulary Practice — Exam 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#7c3aed; --primary-dark:#6d28d9; --primary-light:#f3e8ff;
+  --blue:#1e40af; --green:#059669;
+  --bg:#f5f3ff; --card-bg:#ffffff; --text:#1e1b4b; --text-muted:#64748b;
+  --border:#e2e8f0; --correct:#10b981; --incorrect:#ef4444; --warn:#d97706;
+  --font:'Outfit','Segoe UI',Arial,sans-serif;
+  --shadow:0 10px 25px -5px rgba(0,0,0,.05),0 8px 10px -6px rgba(0,0,0,.05);
+  --radius:16px;
+}
+.dark-theme{
+  --bg:#0f172a; --card-bg:#1e293b; --text:#f8fafc; --text-muted:#94a3b8;
+  --border:#334155; --primary-light:rgba(124,58,237,.18);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s;}
+.site-header{background:var(--primary);color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:100;box-shadow:var(--shadow);}
+.unit-byline{font-size:.75rem;opacity:.72;letter-spacing:.02em;margin-bottom:3px;}
+.unit-title{font-size:1.25rem;font-weight:700;line-height:1.2;}
+.header-actions{display:flex;gap:8px;align-items:center;}
+.icon-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;height:38px;padding:0 14px;border-radius:9999px;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:var(--font);font-weight:600;font-size:.85rem;transition:.25s;}
+.icon-btn:hover{background:rgba(255,255,255,.28);}
+main{max-width:860px;margin:0 auto;padding:26px 18px 120px;}
+.intro{color:var(--text-muted);font-size:.92rem;margin-bottom:22px;line-height:1.55;}
+.intro b{color:var(--text);}
+.part-title{font-size:1.15rem;font-weight:800;color:var(--primary);margin:30px 0 4px;padding-bottom:8px;border-bottom:2px solid var(--primary-light);}
+.ex{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;margin-top:18px;box-shadow:var(--shadow);}
+.ex-head{font-weight:700;color:var(--blue);font-size:1rem;margin-bottom:4px;}
+.ex-sub{font-size:.85rem;color:var(--text-muted);margin-bottom:14px;font-style:italic;}
+.q{padding:11px 0;border-top:1px dashed var(--border);line-height:1.9;}
+.q:first-of-type{border-top:none;}
+.qnum{font-weight:700;color:var(--primary);margin-right:4px;}
+input.gap{font-family:var(--font);font-size:.95rem;font-weight:600;color:var(--primary-dark);background:transparent;border:none;border-bottom:2px solid var(--primary);width:175px;padding:2px 6px;text-align:center;transition:.2s;}
+.dark-theme input.gap{color:#c4b5fd;}
+input.gap.narrow{width:80px;}
+input.gap:focus{outline:none;background:var(--primary-light);}
+input.gap.correct{border-color:var(--correct);color:var(--correct);}
+input.gap.incorrect{border-color:var(--incorrect);color:var(--incorrect);}
+input.gap.unanswered{border-color:var(--warn);background:rgba(217,119,6,.08);}
+.opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.opt{border:1px solid var(--border);background:var(--card-bg);color:var(--text);padding:7px 14px;border-radius:10px;cursor:pointer;font-family:var(--font);font-size:.9rem;font-weight:500;transition:.2s;}
+.opt:hover{border-color:var(--primary);color:var(--primary);}
+.opt.sel{background:var(--primary);color:#fff;border-color:var(--primary);}
+.opt.correct{background:var(--correct);color:#fff;border-color:var(--correct);}
+.opt.incorrect{background:var(--incorrect);color:#fff;border-color:var(--incorrect);}
+.opt.unanswered{border-color:var(--warn);box-shadow:inset 0 0 0 1px var(--warn);}
+.expl{display:none;margin-top:8px;font-size:.85rem;color:var(--green);background:rgba(5,150,105,.09);border-left:3px solid var(--green);padding:7px 12px;border-radius:0 8px 8px 0;}
+.expl.show{display:block;}
+.passage{line-height:2.6;font-size:.97rem;}
+.arrow{color:var(--text-muted);}
+.hintword{font-style:italic;color:var(--text-muted);font-size:.9rem;}
+.keyword{font-weight:800;color:var(--blue);letter-spacing:.03em;}
+.actionbar{position:fixed;bottom:0;left:0;right:0;background:var(--card-bg);border-top:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;box-shadow:0 -6px 20px -8px rgba(0,0,0,.15);z-index:90;}
+.btn{border:none;border-radius:12px;padding:11px 22px;font-family:var(--font);font-weight:700;font-size:.92rem;cursor:pointer;transition:.2s;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-ghost{background:transparent;color:var(--text-muted);border:1px solid var(--border);}
+.btn-ghost:hover{color:var(--primary);border-color:var(--primary);}
+.score{font-weight:800;font-size:1rem;color:var(--primary);min-width:120px;text-align:center;}
+.timer{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);border-radius:10px;padding:6px 14px;font-weight:800;font-size:1.05rem;letter-spacing:.02em;font-variant-numeric:tabular-nums;color:#fff;}
+.timer.warn{background:#fb7185;border-color:#fb7185;animation:pulse 1s infinite;}
+@keyframes pulse{50%{opacity:.6;}}
+.student-bar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;box-shadow:var(--shadow);}
+.student-bar label{font-weight:700;font-size:.9rem;color:var(--text);white-space:nowrap;}
+.student-bar input{font-family:var(--font);font-size:.95rem;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;flex:1;min-width:200px;background:var(--bg);color:var(--text);transition:.2s;}
+.student-bar input:focus{outline:none;border-color:var(--primary);background:var(--card-bg);}
+.name-warn{display:none;color:var(--incorrect);font-size:.85rem;font-weight:700;width:100%;}
+.incomplete-warn{display:none;width:100%;text-align:center;color:var(--warn);font-weight:700;font-size:.85rem;order:-1;}
+.submit-status{font-size:.78rem;font-weight:600;min-width:170px;text-align:center;line-height:1.4;}
+.submit-status.sending{color:var(--text-muted);}
+.submit-status.ok{color:var(--correct);}
+.submit-status.fail{color:var(--incorrect);}
+@media print{.site-header,.actionbar{position:static;}.actionbar{box-shadow:none;}.expl.show{display:block!important;}.icon-btn,.timer{display:none;}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div><div class="unit-byline">ACCUPLACER Exam 2</div><div class="unit-title">ACCUPLACER Exam 2 — Vocabulary Practice</div></div>
+  <div class="header-actions">
+    <span class="timer" id="timer">55:00</span>
+    <button class="icon-btn" onclick="window.print()">🖨️ In</button>
+    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">🌙 Dark</button>
+  </div>
+</header>
+
+<main>
+  <p class="intro"><b>Vocabulary Practice — Exam 2.</b> [ACCUPLACER (B1–B2)] Tổng: 55 câu. Multiple Choice (20) · Fill in the Blanks (20) · Word Formation (15). Từ vựng trích xuất từ bài đọc ACCUPLACER Exam 2, cấp độ B1–B2. Thời gian làm bài: <b>55 phút</b> (đồng hồ đếm ngược ở góc trên). Làm trực tiếp, bấm <b>Kiểm tra đáp án</b> ở dưới để chấm điểm và xem giải thích.</p>
+
+  <div class="student-bar">
+    <label for="studentName">👤 Họ tên học sinh:</label>
+    <input type="text" id="studentName" placeholder="Nhập họ tên của em..." autocomplete="name">
+    <span class="name-warn" id="nameWarn">⚠️ Vui lòng nhập họ tên trước khi nộp bài.</span>
+  </div>
+
+  <div id="ex-container"></div>
+</main>
+
+<div class="actionbar">
+  <div class="incomplete-warn" id="incompleteWarn"></div>
+  <button class="btn btn-primary" onclick="checkAll()">✓ Kiểm tra đáp án</button>
+  <button class="btn btn-ghost" onclick="resetAll()">↺ Làm lại</button>
+  <div class="score" id="score">— / 55</div>
+  <div class="submit-status" id="submitStatus"></div>
+</div>
+
+<script>
+/* ---------- DATA (generated from spec.json by build_html.py) ---------- */
+const DATA = [
+ {
+  "part": "PART A — Vocabulary Recognition (20 câu)"
+ },
+ {
+  "type": "mcq",
+  "head": "Exercise 1: Choose the best word to complete each sentence (20 câu)",
+  "items": [
+   {
+    "q": "The new research center was built to encourage ________ research between biology and computer science.",
+    "o": [
+     "collaborative",
+     "brutal",
+     "sacred",
+     "bleary"
+    ],
+    "a": 0,
+    "ex": "collaborative (adj. mang tính hợp tác): thể hiện sự hợp tác giữa nhiều người hoặc nhóm làm việc cùng nhau."
+   },
+   {
+    "q": "The government passed the tax reform bill with ________ support, which is rare in this polarized climate.",
+    "o": [
+     "longstanding",
+     "bipartisan",
+     "inherent",
+     "measured"
+    ],
+    "a": 1,
+    "ex": "bipartisan (adj. lưỡng đảng): có sự tham gia, ủng hộ đồng thuận của cả hai đảng chính trị đối lập."
+   },
+   {
+    "q": "The sudden discovery of these ancient fossils will ________ the evolutionary history of early mammals.",
+    "o": [
+     "shed light on",
+     "pit against",
+     "account for",
+     "relocate"
+    ],
+    "a": 0,
+    "ex": "shed light on (phr v. làm sáng tỏ): cung cấp thêm thông tin giúp làm rõ hoặc giải thích một vấn đề phức tạp."
+   },
+   {
+    "q": "She showed incredible ________ by refusing to give up on her research despite numerous failed experiments.",
+    "o": [
+     "equation",
+     "jaunt",
+     "tenacity",
+     "constraint"
+    ],
+    "a": 2,
+    "ex": "tenacity (n. sự kiên trì, bền bỉ): tinh thần bền bỉ quyết tâm giữ vững mục tiêu, không từ bỏ khi gặp khó khăn."
+   },
+   {
+    "q": "The local community showed remarkable ________, quickly rebuilding their homes after the devastating flood.",
+    "o": [
+     "partisanship",
+     "subsistence",
+     "resilience",
+     "comparative cognition"
+    ],
+    "a": 2,
+    "ex": "resilience (n. khả năng phục hồi, kiên cường): khả năng vượt qua nghịch cảnh để nhanh chóng hồi phục lại trạng thái tốt."
+   },
+   {
+    "q": "The new program aims to ________ young entrepreneurs by providing them with funding and mentorship.",
+    "o": [
+     "compel",
+     "empower",
+     "pursue",
+     "nestle"
+    ],
+    "a": 1,
+    "ex": "empower (v. trao quyền, tiếp thêm sức mạnh): trao cho ai đó quyền hạn pháp lý hoặc sự tự tin chủ động làm việc."
+   },
+   {
+    "q": "Due to a major budget ________, the team had to scale back their ambitious field expedition.",
+    "o": [
+     "surplus",
+     "impetus",
+     "constraint",
+     "maze"
+    ],
+    "a": 2,
+    "ex": "constraint (n. sự ràng buộc, hạn chế): yếu tố hạn chế hoặc kiểm soát hành động, ví dụ như ngân sách hay thời gian."
+   },
+   {
+    "q": "It is not economically ________ to run a massive data center without a reliable source of green energy.",
+    "o": [
+     "feasible",
+     "subsequent",
+     "sassy",
+     "cellular"
+    ],
+    "a": 0,
+    "ex": "feasible (adj. khả thi): có thể thực hiện một cách thành công và thực tế trong điều kiện cho phép."
+   },
+   {
+    "q": "The designer focused on both the functional utility and the ________ appeal of the new smartphone.",
+    "o": [
+     "inherent",
+     "aesthetic",
+     "robustly",
+     "measured"
+    ],
+    "a": 1,
+    "ex": "aesthetic (adj. thuộc về thẩm mỹ): liên quan đến nghệ thuật, cái đẹp và sự cảm nhận cái đẹp."
+   },
+   {
+    "q": "The company's constant investment in ________ has kept it at the forefront of the tech industry.",
+    "o": [
+     "innovation",
+     "equation",
+     "exile",
+     "corvid"
+    ],
+    "a": 0,
+    "ex": "innovation (n. sự đổi mới, cải tiến): hành động đưa vào các ý tưởng, phương pháp hoặc sản phẩm mới hữu ích."
+   },
+   {
+    "q": "The lawyer advised his client not to ________ the legal challenge without strong evidence.",
+    "o": [
+     "compel",
+     "pursue",
+     "embrace",
+     "excavate"
+    ],
+    "a": 1,
+    "ex": "pursue (v. theo đuổi): bám theo, thực hiện hoặc cố gắng đạt được một mục tiêu hay vụ việc trong thời gian dài."
+   },
+   {
+    "q": "Although the first model failed, the ________ version performed exceptionally well in all tests.",
+    "o": [
+     "subsequent",
+     "synchronous",
+     "longstanding",
+     "brutal"
+    ],
+    "a": 0,
+    "ex": "subsequent (adj. xảy ra sau, tiếp theo): đến hoặc xảy ra sau một sự kiện hoặc thời điểm cụ thể trước đó."
+   },
+   {
+    "q": "The manager's positive feedback gave a fresh ________ to the sales team, boosting their morale.",
+    "o": [
+     "surplus",
+     "impetus",
+     "lifestyle",
+     "departure"
+    ],
+    "a": 1,
+    "ex": "impetus (n. động lực, lực đẩy): lực kích thích hoặc yếu tố thúc đẩy giúp một quá trình phát triển nhanh hơn."
+   },
+   {
+    "q": "The native tribes consider the mountain to be a ________ site and do not allow tourists to climb it.",
+    "o": [
+     "bipartisan",
+     "sassy",
+     "sacred",
+     "volatile"
+    ],
+    "a": 2,
+    "ex": "sacred (adj. thiêng liêng): thuộc về tâm linh thần thánh, được tôn kính và bảo vệ nghiêm ngặt."
+   },
+   {
+    "q": "The country exported its ________ grain to neighboring nations after a highly productive harvest.",
+    "o": [
+     "surplus",
+     "inherent",
+     "subsequent",
+     "measured"
+    ],
+    "a": 0,
+    "ex": "surplus (n/adj. thặng dư, phần dư thừa): lượng còn lại sau khi mọi nhu cầu thiết yếu đã được đáp ứng đầy đủ."
+   },
+   {
+    "q": "We should never ________ the complexity of animal intelligence, as studies on birds have shown.",
+    "o": [
+     "underestimate",
+     "outdo",
+     "compel",
+     "adopt"
+    ],
+    "a": 0,
+    "ex": "underestimate (v. đánh giá thấp): ước tính hoặc nhìn nhận giá trị, khả năng hay sức mạnh của ai/cái gì thấp hơn thực tế."
+   },
+   {
+    "q": "The two neighboring countries have a ________ border dispute that has lasted for over a century.",
+    "o": [
+     "cellular",
+     "longstanding",
+     "feasible",
+     "synchronous"
+    ],
+    "a": 1,
+    "ex": "longstanding (adj. lâu đời): đã tồn tại hoặc tiếp diễn trong một khoảng thời gian rất dài từ quá khứ."
+   },
+   {
+    "q": "The polar explorers had to endure ________ cold and fierce winds during their expedition.",
+    "o": [
+     "brutal",
+     "aesthetic",
+     "measured",
+     "collaborative"
+    ],
+    "a": 0,
+    "ex": "brutal (adj. khắc nghiệt, tàn bạo): cực kỳ khắc nghiệt, thô bạo hoặc khó khăn (thường nói về thời tiết, điều kiện sống)."
+   },
+   {
+    "q": "There are ________ risks in any major financial investment, so caution is highly advised.",
+    "o": [
+     "bipartisan",
+     "inherent",
+     "subsequent",
+     "sassy"
+    ],
+    "a": 1,
+    "ex": "inherent (adj. vốn có, cố hữu): là một phần tự nhiên, không thể tách rời hoặc nằm sẵn bên trong bản chất cái gì."
+   },
+   {
+    "q": "The theater group is planning a ________ of classic Shakespearean plays for the summer season.",
+    "o": [
+     "revival",
+     "departure",
+     "soloist",
+     "maze"
+    ],
+    "a": 0,
+    "ex": "revival (n. sự hồi sinh, phục hưng): quá trình làm sống lại, đưa cái gì đó trở nên phổ biến hoặc hoạt động tốt trở lại."
+   }
+  ]
+ },
+ {
+  "part": "PART B — Production & Word Formation (35 câu)"
+ },
+ {
+  "type": "gap",
+  "head": "Exercise 2: Fill in each blank with a suitable word from the word bank (20 câu)",
+  "sub": "Word Bank: account for, bipartisan, compel, corvid, engender, equation, excavate, exile, fascination, interpreter, incalculably, lifestyle, measured, partisanship, pebble, pesticide, relocate, robustly, soloist, synchronous",
+  "items": [
+   {
+    "q": "The poet spent his final years in [0], writing about his beloved homeland from afar.",
+    "ans": [
+     [
+      "exile"
+     ]
+    ],
+    "ex": "exile (v): đày ải, trục xuất"
+   },
+   {
+    "q": "Extreme hunger can [0] animals to enter human areas in search of food.",
+    "ans": [
+     [
+      "compel"
+     ]
+    ],
+    "ex": "compel (v): bắt buộc, thúc ép"
+   },
+   {
+    "q": "The mentor's encouragement helped to [0] confidence in the young scientist.",
+    "ans": [
+     [
+      "engender"
+     ]
+    ],
+    "ex": "engender (v): sinh ra, đem lại, tạo ra"
+   },
+   {
+    "q": "Extreme [0] in the parliament has blocked the passage of key economic reforms.",
+    "ans": [
+     [
+      "partisanship"
+     ]
+    ],
+    "ex": "partisanship (n): sự phân cực đảng phái"
+   },
+   {
+    "q": "The research team [0] defended their theory during the scientific conference.",
+    "ans": [
+     [
+      "robustly"
+     ]
+    ],
+    "ex": "robustly (adv): một cách mạnh mẽ, kiên quyết"
+   },
+   {
+    "q": "The impact of climate change on ocean biodiversity is [0] large.",
+    "ans": [
+     [
+      "incalculably"
+     ]
+    ],
+    "ex": "incalculably (adv): không thể đong đếm được"
+   },
+   {
+    "q": "Children often have a natural [0] with dinosaurs and ancient fossils.",
+    "ans": [
+     [
+      "fascination"
+     ]
+    ],
+    "ex": "fascination (n): sự cuốn hút, mê hoặc"
+   },
+   {
+    "q": "In this business [0], customer satisfaction is the most important factor.",
+    "ans": [
+     [
+      "equation"
+     ]
+    ],
+    "ex": "equation (n): phương trình, mối quan hệ"
+   },
+   {
+    "q": "The crow is a highly intelligent [0] that can construct basic tools.",
+    "ans": [
+     [
+      "corvid"
+     ]
+    ],
+    "ex": "corvid (n): họ quạ (họ chim thông minh)"
+   },
+   {
+    "q": "The child skipped a smooth flat [0] across the surface of the pond.",
+    "ans": [
+     [
+      "pebble"
+     ]
+    ],
+    "ex": "pebble (n): viên sỏi"
+   },
+   {
+    "q": "Fossil fuels [0] more than eighty percent of global energy consumption.",
+    "ans": [
+     [
+      "account for"
+     ]
+    ],
+    "ex": "account for (v): chiếm (phần trăm, tỷ lệ)"
+   },
+   {
+    "q": "The city has a [0] commitment to reducing carbon emissions by 2030.",
+    "ans": [
+     [
+      "bipartisan"
+     ]
+    ],
+    "ex": "bipartisan (adj): lưỡng đảng, hai đảng đồng lòng"
+   },
+   {
+    "q": "Adopting a vegetarian [0] can have positive effects on both health and the environment.",
+    "ans": [
+     [
+      "lifestyle"
+     ]
+    ],
+    "ex": "lifestyle (n): lối sống, phong cách sống"
+   },
+   {
+    "q": "The excessive use of agricultural [0] has caused damage to local bee populations.",
+    "ans": [
+     [
+      "pesticide"
+     ]
+    ],
+    "ex": "pesticide (n): thuốc trừ sâu"
+   },
+   {
+    "q": "The famous pianist will perform as the main [0] in tonight's concert.",
+    "ans": [
+     [
+      "soloist"
+     ]
+    ],
+    "ex": "soloist (n): diễn viên độc diễn, nghệ sĩ solo"
+   },
+   {
+    "q": "He walked with slow, [0] steps to avoid slipping on the icy pathway.",
+    "ans": [
+     [
+      "measured"
+     ]
+    ],
+    "ex": "measured (adj): nhịp nhàng, đều đặn, có tính toán"
+   },
+   {
+    "q": "The online course features [0] lectures where students interact with the teacher in real-time.",
+    "ans": [
+     [
+      "synchronous"
+     ]
+    ],
+    "ex": "synchronous (adj): đồng bộ, diễn ra đồng thời"
+   },
+   {
+    "q": "Archaeologists plan to [0] the ancient burial site next summer.",
+    "ans": [
+     [
+      "excavate"
+     ]
+    ],
+    "ex": "excavate (v): khai quật, đào bới đất"
+   },
+   {
+    "q": "The company helped to [0] its employees to a new modern office building.",
+    "ans": [
+     [
+      "relocate"
+     ]
+    ],
+    "ex": "relocate (v): di dời, tái định cư"
+   },
+   {
+    "q": "Since the speaker did not know French, she communicated through a bilingual [0].",
+    "ans": [
+     [
+      "interpreter"
+     ]
+    ],
+    "ex": "interpreter (n): người diễn giải, người giải mã"
+   }
+  ]
+ },
+ {
+  "type": "gap",
+  "head": "Exercise 3: Use the correct form of the word in brackets to complete each sentence (15 câu)",
+  "items": [
+   {
+    "q": "The crops showed great [0] (RESILIENT) against the dry weather.",
+    "ans": [
+     [
+      "resilience"
+     ]
+    ],
+    "ex": "resilience (n): sự kiên cường, khả năng chống chịu. Đứng sau tính từ 'great' cần danh từ làm tân ngữ."
+   },
+   {
+    "q": "Her [0] (TENACIOUS) in pursuing her goals earned her the promotion.",
+    "ans": [
+     [
+      "tenacity"
+     ]
+    ],
+    "ex": "tenacity (n): sự bền bỉ, kiên trì. Đứng sau tính từ sở hữu 'Her' cần danh từ làm chủ ngữ."
+   },
+   {
+    "q": "The project was a [0] (COLLABORATE) effort between three universities.",
+    "ans": [
+     [
+      "collaborative"
+     ]
+    ],
+    "ex": "collaborative (adj): mang tính hợp tác. Đứng trước danh từ 'effort' cần tính từ bổ nghĩa."
+   },
+   {
+    "q": "The doctor spoke in a [0] (MEASURE) tone to explain the test results.",
+    "ans": [
+     [
+      "measured"
+     ]
+    ],
+    "ex": "measured (adj): có tính toán, chậm rãi nhịp nhàng. Đứng trước danh từ 'tone' để làm tính từ hạn định."
+   },
+   {
+    "q": "The dancers performed a series of [0] (SYNCHRONIZE) movements.",
+    "ans": [
+     [
+      "synchronous"
+     ]
+    ],
+    "ex": "synchronous (adj): đồng bộ, đồng thời. Bổ nghĩa cho danh từ 'movements'."
+   },
+   {
+    "q": "The new art gallery was designed with high [0] (AESTHETICS) standards.",
+    "ans": [
+     [
+      "aesthetic"
+     ]
+    ],
+    "ex": "aesthetic (adj): thuộc về thẩm mỹ. Đứng trước danh từ 'standards' bổ nghĩa tạo cụm tính-danh."
+   },
+   {
+    "q": "There is an [0] (INHERE) risk in climbing steep mountains.",
+    "ans": [
+     [
+      "inherent"
+     ]
+    ],
+    "ex": "inherent (adj): vốn có, cố hữu. Đứng trước danh từ 'risk' sau mạo từ 'an'."
+   },
+   {
+    "q": "She felt [0] (MISUNDERSTAND) when they laughed at her idea.",
+    "ans": [
+     [
+      "misunderstood"
+     ]
+    ],
+    "ex": "misunderstood (adj): bị hiểu lầm. Đứng sau động từ liên kết 'felt' cần tính từ dạng quá khứ phân từ chỉ trạng thái cảm xúc."
+   },
+   {
+    "q": "They made a serious [0] (ESTIMATE) of the opponent's strength.",
+    "ans": [
+     [
+      "underestimate"
+     ]
+    ],
+    "ex": "underestimate (n): sự đánh giá thấp. Đứng sau tính từ 'serious' cần một danh từ."
+   },
+   {
+    "q": "The two families have a [0] (STAND) tradition of sharing harvests.",
+    "ans": [
+     [
+      "longstanding"
+     ]
+    ],
+    "ex": "longstanding (adj): lâu đời. Cần ghép từ 'long' + 'standing' thành tính từ bổ nghĩa cho 'tradition'."
+   },
+   {
+    "q": "Researchers are studying the [0] (CELL) structures of rare plants.",
+    "ans": [
+     [
+      "cellular"
+     ]
+    ],
+    "ex": "cellular (adj): thuộc về tế bào. Biến danh từ 'cell' thành tính từ 'cellular' đứng trước 'structures'."
+   },
+   {
+    "q": "There are several [0] (COMPETE) theories about how the pyramid was built.",
+    "ans": [
+     [
+      "competing"
+     ]
+    ],
+    "ex": "competing (adj): cạnh tranh, đối lập. Cần phân từ đóng vai trò tính từ đứng trước danh từ 'theories'."
+   },
+   {
+    "q": "The plane's [0] (DEPART) was delayed by the heavy snowstorm.",
+    "ans": [
+     [
+      "departure"
+     ]
+    ],
+    "ex": "departure (n): sự khởi hành. Đứng sau sở hữu cách 'plane's' cần danh từ làm chủ ngữ."
+   },
+   {
+    "q": "The team won the award for their highly [0] (INNOVATE) design.",
+    "ans": [
+     [
+      "innovative"
+     ]
+    ],
+    "ex": "innovative (adj): mang tính đổi mới, sáng tạo. Đứng sau trạng từ 'highly' bổ nghĩa cho danh từ 'design'."
+   },
+   {
+    "q": "The children watched the magician with absolute [0] (FASCINATE).",
+    "ans": [
+     [
+      "fascination"
+     ]
+    ],
+    "ex": "fascination (n): sự mê hoặc, cuốn hút. Đứng sau giới từ 'with' và tính từ 'absolute' cần danh từ."
+   }
+  ]
+ }
+];
+
+/* ---------- RENDER ---------- */
+const norm = s => s.toLowerCase().trim().replace(/[’']/g,"'").replace(/\s+/g,' ').replace(/[.]$/,'').replace(/[—–]/g,'-');
+const shortHead = h => h.replace(/^Exercise\s*(\d+):\s*/i,'Ex$1: ').replace(/\s*\(\d+\s*câu\)\s*$/i,'').trim();
+let questions=[]; // each = one gradable "câu"
+const container=document.getElementById('ex-container');
+
+DATA.forEach(block=>{
+  if(block.part){ const h=document.createElement('div');h.className='part-title';h.innerHTML=block.part;container.appendChild(h);return;}
+  const ex=document.createElement('div');ex.className='ex';
+  const head=document.createElement('div');head.className='ex-head';head.innerHTML=block.head;ex.appendChild(head);
+  if(block.sub){const s=document.createElement('div');s.className='ex-sub';s.textContent=block.sub;ex.appendChild(s);}
+  const exLabel = block.head ? shortHead(block.head) : '';
+
+  if(block.type==='gap'){
+    block.items.forEach((it,i)=>{
+      const q=document.createElement('div');q.className='q';
+      let html='<span class="qnum">'+(i+1)+'.</span> '+it.q;
+      html=html.replace(/\[(\d+)\]/g,(m,idx)=>`<input class="gap" data-blank="${idx}">`);
+      q.innerHTML=html;
+      const expl=document.createElement('div');expl.className='expl';expl.textContent=it.ex||'';q.appendChild(expl);
+      const blanks=it.ans.map((acc,bi)=>({el:q.querySelector(`input[data-blank="${bi}"]`),acc}));
+      questions.push({kind:'gap',blanks,expl,label:exLabel+' — câu '+(i+1)});
+      ex.appendChild(q);
+    });
+  }
+  else if(block.type==='mcq'){
+    block.items.forEach((it,i)=>{
+      const q=document.createElement('div');q.className='q';
+      q.innerHTML='<span class="qnum">'+(i+1)+'.</span> '+it.q;
+      const opts=document.createElement('div');opts.className='opts';
+      const rec={kind:'mcq',sel:-1,a:it.a,o:it.o,btns:[],expl:null,label:exLabel+' — câu '+(i+1)};
+      it.o.forEach((o,oi)=>{
+        const b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+oi)+'. '+o;
+        b.onclick=()=>{rec.btns.forEach(x=>x.classList.remove('sel'));b.classList.add('sel');rec.sel=oi;};
+        opts.appendChild(b);rec.btns.push(b);
+      });
+      q.appendChild(opts);
+      const expl=document.createElement('div');expl.className='expl';expl.textContent=it.ex||'';q.appendChild(expl);
+      rec.expl=expl;
+      questions.push(rec);
+      ex.appendChild(q);
+    });
+  }
+  else if(block.type==='passage'){
+    const p=document.createElement('div');p.className='q passage';
+    p.innerHTML=block.text.replace(/\[(\d+)\]/g,(m,idx)=>`<input class="gap" data-blank="${idx}">`);
+    ex.appendChild(p);
+    const expWrap=document.createElement('div');expWrap.className='expl';expWrap.innerHTML=block.exs.join('<br>');
+    block.ans.forEach((acc,bi)=>{
+      const el=p.querySelector(`input[data-blank="${bi}"]`);
+      questions.push({kind:'gap',blanks:[{el,acc}],expl:expWrap,label:exLabel+' — chỗ trống '+(bi+1)});
+    });
+    ex.appendChild(expWrap);
+  }
+  container.appendChild(ex);
+});
+const TOTAL=questions.length;
+document.getElementById('score').textContent='— / '+TOTAL;
+
+/* ---------- TIMER (đếm ngược 55 phút) ---------- */
+const TOTAL_TIME_SECONDS=55*60;
+let remainingSeconds=TOTAL_TIME_SECONDS, elapsedSeconds=0, timerId=null, submitted=false;
+function fmtTime(sec){
+  const m=String(Math.floor(sec/60)).padStart(2,'0');
+  const s=String(sec%60).padStart(2,'0');
+  return m+':'+s;
+}
+function updateTimerDisplay(){
+  const el=document.getElementById('timer');
+  el.textContent=fmtTime(Math.max(remainingSeconds,0));
+  el.classList.toggle('warn',remainingSeconds<=300&&remainingSeconds>0);
+}
+function startTimer(){
+  if(timerId)return;
+  timerId=setInterval(()=>{
+    remainingSeconds--;
+    elapsedSeconds=TOTAL_TIME_SECONDS-remainingSeconds;
+    updateTimerDisplay();
+    if(remainingSeconds<=0){
+      stopTimer();
+      if(!submitted)checkAll(); // hết giờ tự động nộp bài (nếu chưa điền tên, sẽ nhắc điền tên)
+    }
+  },1000);
+}
+function stopTimer(){ if(timerId){clearInterval(timerId);timerId=null;} }
+
+/* ---------- SUBMIT TO GOOGLE APPS SCRIPT (bỏ qua nếu spec.json không cấu hình script_url) ---------- */
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbz2eP8rbp8n3aRMBBt04Rr_Ul3hohjErchRhQncCF5IXnhqIAE2B2Y3b47sopIxXeE4/exec';
+function sendResultToServer(name,score,total,timeSec,details){
+  if(!SCRIPT_URL) return; // chưa cấu hình script_url — chỉ chấm điểm tại chỗ, không gửi đi đâu
+  const statusEl=document.getElementById('submitStatus');
+  statusEl.textContent='📤 Đang gửi kết quả...';
+  statusEl.className='submit-status sending';
+  const payload=new URLSearchParams({
+    name:name,
+    class:'ACCUPLACER Exam 2',
+    unit:'ACCUPLACER Exam 2 — Vocabulary Practice',
+    level:'ACCUPLACER (B1–B2)',
+    score:String(score),
+    total:String(total),
+    timeSeconds:String(timeSec),
+    timeFormatted:fmtTime(timeSec),
+    timestamp:new Date().toISOString(),
+    detailsJson:JSON.stringify(details||[])
+  });
+  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:payload})
+    .then(()=>{ statusEl.textContent='✅ Đã gửi kết quả về giáo viên.'; statusEl.className='submit-status ok'; })
+    .catch(()=>{ statusEl.textContent='⚠️ Gửi kết quả thất bại (kiểm tra mạng). Điểm vẫn hiển thị ở trên.'; statusEl.className='submit-status fail'; });
+}
+
+/* ---------- CHECK ---------- */
+function checkAll(){
+  const nameEl=document.getElementById('studentName');
+  const name=(nameEl.value||'').trim();
+  const nameWarn=document.getElementById('nameWarn');
+  if(!name){
+    nameWarn.style.display='block';
+    nameEl.focus();
+    nameEl.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  nameWarn.style.display='none';
+
+  // Không bắt buộc làm hết mới được kiểm tra — chỉ đánh dấu và không tính điểm
+  // cho câu bỏ trống. Giải thích chỉ hiện với câu học sinh đã thực sự làm.
+  const incompleteWarn=document.getElementById('incompleteWarn');
+  let correct=0, missingCount=0;
+  const details=[];
+  questions.forEach((it,idx)=>{
+    if(it.kind==='gap'){
+      let allOk=true, attempted=false;
+      const given=[], acc0=[];
+      it.blanks.forEach(bl=>{ if((bl.el.value||'').trim())attempted=true; });
+      it.blanks.forEach(bl=>{
+        const raw=bl.el.value||'';
+        bl.el.classList.remove('correct','incorrect','unanswered');
+        if(!raw.trim()){
+          bl.el.classList.add('unanswered');
+          allOk=false;
+        } else {
+          const ok=norm(raw)!==''&&bl.acc.map(norm).includes(norm(raw));
+          bl.el.classList.add(ok?'correct':'incorrect');
+          if(!ok)allOk=false;
+        }
+        given.push(raw?raw:'(bỏ trống)');
+        acc0.push(bl.acc[0]);
+      });
+      if(allOk)correct++;
+      if(!attempted)missingCount++;
+      if(it.expl)it.expl.classList.toggle('show',attempted);
+      details.push({no:idx+1,label:it.label||'',given:given.join(' | '),answer:acc0.join(' | '),correct:allOk?1:0});
+    } else {
+      const attempted=it.sel!==-1;
+      it.btns.forEach((b,bi)=>{
+        b.classList.remove('correct','incorrect','unanswered');
+        if(!attempted){ b.classList.add('unanswered'); }
+        else if(bi===it.a){ b.classList.add('correct'); }
+        else if(bi===it.sel){ b.classList.add('incorrect'); }
+      });
+      const ok=attempted&&it.sel===it.a;
+      if(ok)correct++;
+      if(!attempted)missingCount++;
+      if(it.expl)it.expl.classList.toggle('show',attempted);
+      details.push({no:idx+1,label:it.label||'',given:it.sel>=0?it.o[it.sel]:'(chưa chọn)',answer:it.o[it.a],correct:ok?1:0});
+    }
+  });
+  document.getElementById('score').textContent=correct+' / '+TOTAL;
+
+  if(missingCount>0){
+    incompleteWarn.textContent=`ℹ️ Còn ${missingCount} câu bạn chưa làm — những câu đó chưa hiện giải thích và chưa được tính điểm.`;
+    incompleteWarn.style.display='block';
+  } else {
+    incompleteWarn.style.display='none';
+  }
+
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  if(!submitted){
+    submitted=true;
+    stopTimer();
+    sendResultToServer(name,correct,TOTAL,elapsedSeconds,details);
+  }
+}
+function resetAll(){
+  questions.forEach(it=>{
+    if(it.kind==='gap'){it.blanks.forEach(bl=>{bl.el.value='';bl.el.classList.remove('correct','incorrect','unanswered');});}
+    else{it.sel=-1;it.btns.forEach(b=>b.classList.remove('sel','correct','incorrect','unanswered'));}
+    if(it.expl)it.expl.classList.remove('show');
+  });
+  document.getElementById('score').textContent='— / '+TOTAL;
+  document.getElementById('submitStatus').textContent='';
+  document.getElementById('nameWarn').style.display='none';
+  document.getElementById('incompleteWarn').style.display='none';
+  submitted=false;
+  remainingSeconds=TOTAL_TIME_SECONDS;
+  elapsedSeconds=0;
+  updateTimerDisplay();
+  stopTimer();
+  startTimer();
+}
+function toggleTheme(){
+  document.body.classList.toggle('dark-theme');
+  document.getElementById('themeBtn').textContent=document.body.classList.contains('dark-theme')?'☀️ Light':'🌙 Dark';
+}
+
+updateTimerDisplay();
+startTimer();
+</script>
+</body>
+</html>
